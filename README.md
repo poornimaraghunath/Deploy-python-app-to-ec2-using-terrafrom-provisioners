@@ -90,4 +90,7 @@ resource "aws_instance" "example" {
 }
 
 
+Note: Command for generating ssh key on local machine is mentioned below
+ ssh-keygen -t rsa 
+
 

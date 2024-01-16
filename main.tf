@@ -6,9 +6,20 @@ variable "cidr" {
   default = "10.0.0.0/16"
 }
 
+variable "ssh_public_key_path" {
+  default = "C:/Users/pavan/.ssh/id_rsa.pub"
+}
+
+variable "ssh_private_key_path" {
+  default = "C:/Users/pavan/.ssh/id_rsa"
+}
+ 
+  
+
+
 resource "aws_key_pair" "example" {
   key_name = "terraform-python"
-  public_key = file("/c/Users/pavan/.ssh/id_rsa.pub")
+  public_key = file(var.ssh_public_key_path)
 }
 
 resource "aws_vpc" "myvpc" {
@@ -18,7 +29,7 @@ resource "aws_vpc" "myvpc" {
 resource "aws_subnet" "sub1" {
     vpc_id = aws_vpc.myvpc.id
     cidr_block = "10.0.0.0/24"
-    availability_zone = "us-east-1"
+    availability_zone = "us-east-1a"
     map_public_ip_on_launch = true
 }
 
@@ -30,7 +41,7 @@ resource "aws_route_table" "RT" {
     vpc_id = aws_vpc.myvpc.id
 
     route {
-        cidr_block = "0.0.0.0"
+        cidr_block = "0.0.0.0/0"
         gateway_id = aws_internet_gateway.igw.id
     }
   
@@ -83,7 +94,7 @@ resource "aws_instance" "demo" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("/c/Users/pavan/.ssh/id_rsa")
+      private_key = file(var.ssh_private_key_path)
       host = self.public_ip
     }
      # File provisioner to copy a file from local to the remote EC2 instance
